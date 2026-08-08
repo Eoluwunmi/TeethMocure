@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  fullName  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders   Order[]
+  marketer Marketer?
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName      String
+  phone         String
+  email         String?
+  address       String
+  state         String
+  package       String
+  paymentMethod String
+  status        String   @default("pending")
+  marketerCode  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Marketer {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone             String
+  referralCode      String   @unique
+  status            String   @default("pending")
+  commissionBalance Float    @default(0)
+  bankName          String?
+  accountNumber     String?
+  accountName       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  phone     String
+  email     String?
+  source    String?
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}

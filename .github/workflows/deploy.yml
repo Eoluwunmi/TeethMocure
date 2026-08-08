@@ -1,0 +1,103 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+    name: Test Frontend
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: http://localhost:3001
+          VITE_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+  test-backend:
+    runs-on: ubuntu-latest
+    name: Test Backend
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies (backend)
+        working-directory: ./backend
+        run: npm install
+
+      - name: TypeScript check (backend)
+        working-directory: ./backend
+        run: npx tsc --noEmit
+
+      - name: Build (backend)
+        working-directory: ./backend
+        run: npm run build
+
+  deploy-frontend:
+    needs: test-frontend
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Deploy Frontend to Vercel
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Vercel
+        uses: vercel/action@master
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          production: true
+        env:
+          VITE_API_URL: https://api.teethmocure.com
+          VITE_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+  deploy-backend:
+    needs: test-backend
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Deploy Backend to Render
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Trigger Render deployment
+        run: |
+          curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }} -X POST
+        continue-on-error: true
+
+  notification:
+    needs: [deploy-frontend, deploy-backend]
+    if: always()
+    runs-on: ubuntu-latest
+    name: Deployment Notification
+    steps:
+      - name: Check deployment status
+        run: |
+          if [ "${{ needs.deploy-frontend.result }}" == "success" ] && [ "${{ needs.deploy-backend.result }}" == "success" ]; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed!"
+            exit 1
+          fi

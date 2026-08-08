@@ -1,0 +1,146 @@
+# Environment Variables
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+
+# API Keys & Secrets
+*.key
+*.pem
+secrets.json
+credentials.json
+.api-key
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build Output
+dist/
+build/
+.out/
+out/
+*.tsbuildinfo
+
+# IDE & Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+junit.xml
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime Data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS Files
+Thumbs.db
+.Thumbs.db
+.directory
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+*.cache
+
+# Local development
+.local/
+.env.local.example
+
+# Build artifacts
+*.bundle.*
+*.chunk.*
+.vite/
+
+# Misc
+.turbo/
+.next/
+.nuxt/
+dist/
+
+# Keep environment template as example (don't ignore this)
+!.env.example
+!.env.template
+
+# Abort uncommitted changes warning
+.abort_commit
+
+# OS-specific
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# IDE Config (but keep examples)
+.vscode/settings.json
+.idea/workspace.xml
+
+# Sensitive Production Files
+production.env
+staging.env
+firebase-config.json
+aws-credentials.json
+stripe-keys.json
+twilio-config.json
+
+# Base44 Sensitive
+base44-token.txt
+base44-credentials.json
+base44/.env
+
+# Anthropic/Claude API
+claude-api-key.txt
+anthropic-key.json
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+.prisma/
+
+# Package managers - keep lock files in some cases for reproducibility
+# Uncomment if needed:
+# package-lock.json
+# yarn.lock
+
+# Generated files
+*.generated.ts
+*.generated.js
+
+# Backup files from merges
+*.orig

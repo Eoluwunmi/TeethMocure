@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: teethmocure-api
+    runtime: node
+    runtimeVersion: 18
+
+    # Build configuration
+    buildCommand: npm run build
+    startCommand: npm start
+
+    # Environment
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://teethmocure.com
+      - key: SENTRY_DSN
+        sync: false
+      - key: LOG_LEVEL
+        value: info
+
+    # Deployment
+    autoDeploy: true
+    region: oregon
+
+    # Scaling
+    numInstances: 1
+    instanceType: standard
+    autoscalerSettings:
+      cpuThreshold: 80
+      memoryThreshold: 80
+      maxInstances: 3
+
+    # Health checks
+    healthCheckPath: /health
+    healthCheckInterval: 30
+
+    # Monitoring
+    envGroupId: production-secrets
+
+postgres:
+  - name: postgres
+    databaseName: neondb
+    user: neondb_owner
+    version: 15
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow all (use VPC for production)
