@@ -1,13 +1,30 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "env": {
-    "VITE_API_URL": "@api_url_production",
-    "VITE_ANTHROPIC_API_KEY": "@anthropic_key"
+  "projects": {
+    "frontend": {
+      "rootDirectory": ".",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "installCommand": "npm install",
+      "env": {
+        "VITE_API_URL": "@api_url_production",
+        "VITE_ANTHROPIC_API_KEY": "@anthropic_key"
+      },
+      "envPrefix": "VITE_"
+    },
+    "backend": {
+      "rootDirectory": "backend",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "installCommand": "npm install",
+      "env": {
+        "DATABASE_URL": "@database_url_production",
+        "JWT_SECRET": "@jwt_secret_production",
+        "NODE_ENV": "production",
+        "CORS_ORIGIN": "@cors_origin_production"
+      }
+    }
   },
-  "envPrefix": "VITE_",
   "headers": [
     {
       "source": "/(.*)",
@@ -41,14 +58,12 @@
   ],
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/api/:1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://api.teethmocure.com/api/:1"
     }
   ]
 }
